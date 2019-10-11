@@ -2,6 +2,7 @@ package com.goldenfuturecommunication.androidnetworking;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +15,10 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.display.CircleBitmapDisplayer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-ImageView imageView,imageView2,imageView3,imageView4;
+ImageView imageView,imageView2,imageView3,imageView4,imageView5,imageView6;
     private ImageLoader imageLoader;
     Button fetch,fetch2;
     List<List_Data> list_data;
@@ -42,19 +45,51 @@ ImageView imageView,imageView2,imageView3,imageView4;
         imageView2=(ImageView)findViewById(R.id.imageView2);
         imageView3=(ImageView)findViewById(R.id.imageView3);
         imageView4=(ImageView)findViewById(R.id.imageView4);
+        imageView5=(ImageView)findViewById(R.id.imageView5);
+        imageView6=(ImageView)findViewById(R.id.imageView6);
         fetch=(Button)findViewById(R.id.fetch);
         fetch2=(Button)findViewById(R.id.fetch2);
 
         imageLoader = ImageLoader.getInstance(); // Get singleton instance
         imageLoader.init(ImageLoaderConfiguration
                 .createDefault(MainActivity.this));
+
+
         // from Web
         imageLoader.displayImage("https://images.unsplash.com/photo-1500622944204-b135684e99fd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80", imageView);
+
         // from drawables
         imageLoader.displayImage("drawable://" + R.drawable.img1, imageView2);
         //from SD card
         imageLoader.displayImage("file:///mnt/sdcard/bird.jpg", imageView3);
+        //video thumbnail
         imageLoader.displayImage("file:///mnt/sdcard/myvideo.mp4", imageView4);
+
+//load image as circular
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .displayer(new CircleBitmapDisplayer())
+                .showImageOnLoading(android.R.color.transparent)
+                .showImageForEmptyUri(R.drawable.avatar)
+                .showImageOnFail(R.drawable.avatar)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+        imageLoader.displayImage("https://images.unsplash.com/photo-1500622944204-b135684e99fd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80", imageView5,options);
+
+
+
+        //load empty or wrong url
+        DisplayImageOptions option = new DisplayImageOptions.Builder()
+                .showImageOnLoading(android.R.color.transparent)
+                .showImageForEmptyUri(R.drawable.avatar)
+                .showImageOnFail(R.drawable.avatar)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .build();
+        imageLoader.displayImage("abc", imageView6,option);
+
+
+
 
         /*
         "content://media/external/images/media/13" // from content provider
@@ -94,7 +129,7 @@ ImageView imageView,imageView2,imageView3,imageView4;
         fetch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AndroidNetworking.post("http://furiousbuddy.com/Android/GFCAttendance/check_emp.php")
+                AndroidNetworking.post("https://furiousbuddy.com/Android/GFCAttendance/check_emp.php")
                         .addBodyParameter("emp_id", "GFC/EMP0001")
                         .setTag("test")
                         .setPriority(Priority.MEDIUM)
